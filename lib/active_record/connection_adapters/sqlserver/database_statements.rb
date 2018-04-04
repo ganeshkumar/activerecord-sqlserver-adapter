@@ -333,8 +333,8 @@ module ActiveRecord
         # === SQLServer Specific (Selecting) ============================ #
 
         def raw_select(sql, name = 'SQL', binds = [], options = {})
-          log("new logger statements added *****************************************************") do
-          end
+          # log("new logger statements added *****************************************************") do
+          # end
           log(sql, name, binds) { _raw_select(sql, options) }
         end
 
@@ -348,7 +348,9 @@ module ActiveRecord
         def raw_connection_run(sql)
           case @connection_options[:mode]
           when :dblib
-            @connection.execute(sql)
+            log(sql, "new logger statements added *****************************************************") do
+              @connection.execute(sql)
+            end
           end
         end
 
