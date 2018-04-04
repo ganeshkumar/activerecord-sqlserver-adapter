@@ -336,7 +336,11 @@ module ActiveRecord
         end
 
         def _raw_select(sql, options = {})
+          log(" before executing sql query********************#{Time.now.utc.strftime("%Y-%m-%dT%H:%M:%S.%LZ").inspect}*********************************") do
+          end
           handle = raw_connection_run(sql)
+          log(" after executing sql query********************#{Time.now.utc.strftime("%Y-%m-%dT%H:%M:%S.%LZ").inspect}*********************************") do
+          end
           handle_to_names_and_values(handle, options)
         ensure
           finish_statement_handle(handle)
@@ -345,12 +349,7 @@ module ActiveRecord
         def raw_connection_run(sql)
           case @connection_options[:mode]
           when :dblib
-            log(" before executing sql query********************#{Time.now.utc.strftime("%Y-%m-%dT%H:%M:%S.%LZ").inspect}*********************************") do
-            end
-            st = @connection.execute(sql)
-            log(" after executing sql query********************#{Time.now.utc.strftime("%Y-%m-%dT%H:%M:%S.%LZ").inspect}*********************************") do
-            end
-            st
+            @connection.execute(sql)
           end
         end
 
