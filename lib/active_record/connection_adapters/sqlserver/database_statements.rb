@@ -280,7 +280,8 @@ module ActiveRecord
 
         def raw_connection_do(sql)
           case @connection_options[:mode]
-          when :dblib
+            when :dblib
+            puts "just logger message ***********************************************************************************************"
             @connection.execute(sql).do
           end
         ensure
