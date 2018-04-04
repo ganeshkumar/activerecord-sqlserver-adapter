@@ -222,7 +222,13 @@ module ActiveRecord
         # === SQLServer Specific (Executing) ============================ #
 
         def do_execute(sql, name = 'SQL')
-          log(sql, name) { raw_connection_do(sql) }
+          log(" do_execute - Before executing sql query*****#{sql.inspect}***************#{Time.now.utc.strftime("%Y-%m-%dT%H:%M:%S.%LZ").inspect}*********************************") do
+          end
+
+          t = log(sql, name) { raw_connection_do(sql) }
+          log(" do_execute - After executing sql query*****#{sql.inspect}***************#{Time.now.utc.strftime("%Y-%m-%dT%H:%M:%S.%LZ").inspect}*********************************") do
+          end
+          t
         end
 
         def sp_executesql(sql, name, binds, options = {})
@@ -330,8 +336,6 @@ module ActiveRecord
         # === SQLServer Specific (Selecting) ============================ #
 
         def raw_select(sql, name = 'SQL', binds = [], options = {})
-          # log("new logger statements added *****************************************************") do
-          # end
           log(sql, name, binds) { _raw_select(sql, options) }
         end
 
