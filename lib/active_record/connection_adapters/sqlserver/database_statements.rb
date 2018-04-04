@@ -222,6 +222,9 @@ module ActiveRecord
         # === SQLServer Specific (Executing) ============================ #
 
         def do_execute(sql, name = 'SQL')
+          puts "********************do_execute*************************************************************************"
+          log('added logger statments ***********do_execute**********************************************') do
+          end
           log(sql, name) { raw_connection_do(sql) }
         end
 
@@ -281,7 +284,6 @@ module ActiveRecord
         def raw_connection_do(sql)
           case @connection_options[:mode]
             when :dblib
-            puts "just logger message ***********************************************************************************************"
             @connection.execute(sql).do
           end
         ensure
@@ -331,6 +333,7 @@ module ActiveRecord
         # === SQLServer Specific (Selecting) ============================ #
 
         def raw_select(sql, name = 'SQL', binds = [], options = {})
+          log("new logger statements added *****************************************************")
           log(sql, name, binds) { _raw_select(sql, options) }
         end
 
