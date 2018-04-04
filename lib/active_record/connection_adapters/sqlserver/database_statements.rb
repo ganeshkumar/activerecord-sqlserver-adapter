@@ -333,7 +333,8 @@ module ActiveRecord
         # === SQLServer Specific (Selecting) ============================ #
 
         def raw_select(sql, name = 'SQL', binds = [], options = {})
-          log("new logger statements added *****************************************************")
+          log("new logger statements added *****************************************************") do
+          end
           log(sql, name, binds) { _raw_select(sql, options) }
         end
 
