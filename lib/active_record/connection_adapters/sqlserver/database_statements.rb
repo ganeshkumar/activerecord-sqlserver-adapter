@@ -222,9 +222,6 @@ module ActiveRecord
         # === SQLServer Specific (Executing) ============================ #
 
         def do_execute(sql, name = 'SQL')
-          puts "********************do_execute*************************************************************************"
-          log('added logger statments ***********do_execute**********************************************') do
-          end
           log(sql, name) { raw_connection_do(sql) }
         end
 
@@ -348,9 +345,12 @@ module ActiveRecord
         def raw_connection_run(sql)
           case @connection_options[:mode]
           when :dblib
-            log(sql, "new logger statements added *****************************************************") do
-              @connection.execute(sql)
+            log(" before executing sql query********************#{Time.now.utc.inspect}*********************************") do
             end
+            st = @connection.execute(sql)
+            log(" after executing sql query********************#{Time.now.utc.inspect}*********************************") do
+            end
+            st
           end
         end
 
