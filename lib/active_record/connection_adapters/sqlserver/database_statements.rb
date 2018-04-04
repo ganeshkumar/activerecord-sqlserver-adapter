@@ -343,9 +343,10 @@ module ActiveRecord
           log(" before executing sql query*****#{sql.inspect}***************#{Time.now.utc.strftime("%Y-%m-%dT%H:%M:%S.%LZ").inspect}*********************************") do
           end
           handle = raw_connection_run(sql)
+          t = handle_to_names_and_values(handle, options)
           log(" after executing sql query**********#{sql.inspect}**********#{Time.now.utc.strftime("%Y-%m-%dT%H:%M:%S.%LZ").inspect}*********************************") do
           end
-          handle_to_names_and_values(handle, options)
+          t
         ensure
           finish_statement_handle(handle)
         end
