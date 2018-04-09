@@ -12,14 +12,14 @@ module ActiveRecord
         end
 
         def exec_query(sql, name = 'SQL', binds = [], prepare: false)
-          # uuid = SecureRandom.uuid
-          # start_time = Time.now.utc
-          # log("======= START EXEC QUERY (method: exec_query) #{sql.inspect} -- #{uuid} -- =======") do
-          # end
+          uuid = SecureRandom.uuid
+          start_time = Time.now.utc
+          log("======= START EXEC QUERY (method: exec_query) #{sql.inspect} -- #{uuid} -- =======") do
+          end
           result = sp_executesql(sql, name, binds, prepare: prepare)
-          # end_time = Time.now.utc - start_time
-          # log("======= END EXEC QUERY(method: exec_query) -- #{uuid} -- COMPLETED IN #{end_time} =======") do
-          # end
+          end_time = Time.now.utc - start_time
+          log("======= END EXEC QUERY(method: exec_query) -- #{uuid} -- COMPLETED IN #{end_time} =======") do
+          end
           result
         end
 
@@ -236,17 +236,17 @@ module ActiveRecord
         def sp_executesql(sql, name, binds, options = {})
           options[:ar_result] = true if options[:fetch] != :rows
           unless without_prepared_statement?(binds)
-            # uuid = SecureRandom.uuid
-            # start_time = Time.now.utc
-            #
-            # log("******************  START EXEC QUERY (method: sp_executesql_types_and_parameters) #{sql.inspect} -- #{uuid} -- =======") do
-            # end
+            uuid = SecureRandom.uuid
+            start_time = Time.now.utc
+
+            log("******************  START EXEC QUERY (method: sp_executesql_types_and_parameters) #{sql.inspect} -- #{uuid} -- =======") do
+            end
 
             types, params = sp_executesql_types_and_parameters(binds)
 
-            # end_time = Time.now.utc - start_time
-            # log("******************  END EXEC QUERY(method: sp_executesql_types_and_parameters) -- #{uuid} -- COMPLETED IN #{end_time} =======") do
-            # end
+            end_time = Time.now.utc - start_time
+            log("******************  END EXEC QUERY(method: sp_executesql_types_and_parameters) -- #{uuid} -- COMPLETED IN #{end_time} =======") do
+            end
             sql = sp_executesql_sql(sql, types, params, name)
           end
           raw_select sql, name, binds, options
@@ -288,20 +288,20 @@ module ActiveRecord
               sql = sql.sub substitute_at_finder, param.to_s
             end
           else
-            # uuid = SecureRandom.uuid
-            # start_time = Time.now.utc
+            uuid = SecureRandom.uuid
+            start_time = Time.now.utc
 
-            # log("******************  START EXEC QUERY (method: sp_executesql_sql) -- #{uuid} -- =======") do
-            # end
+            log("******************  START EXEC QUERY (method: sp_executesql_sql) -- #{uuid} -- =======") do
+            end
 
             types = quote(types.join(', '))
             params = params.map.with_index{ |p, i| "@#{i} = #{p}" }.join(', ') # Only p is needed, but with @i helps explain regexp.
             sql = "EXEC sp_executesql #{quote(sql)}"
             sql << ", #{types}, #{params}" unless params.empty?
 
-            # end_time = Time.now.utc - start_time
-            # log("******************  END EXEC QUERY(method: sp_executesql_sql) --#{sql.inspect} -- #{uuid} -- COMPLETED IN #{end_time} =======") do
-            # end
+            end_time = Time.now.utc - start_time
+            log("******************  END EXEC QUERY(method: sp_executesql_sql) --#{sql.inspect} -- #{uuid} -- COMPLETED IN #{end_time} =======") do
+            end
 
           end
           sql
