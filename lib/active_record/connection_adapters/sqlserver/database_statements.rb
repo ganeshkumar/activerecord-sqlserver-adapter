@@ -288,10 +288,21 @@ module ActiveRecord
               sql = sql.sub substitute_at_finder, param.to_s
             end
           else
+            uuid = SecureRandom.uuid
+            start_time = Time.now.utc
+
+            log("******************  START EXEC QUERY (method: sp_executesql_sql) -- #{uuid} -- =======") do
+            end
+
             types = quote(types.join(', '))
             params = params.map.with_index{ |p, i| "@#{i} = #{p}" }.join(', ') # Only p is needed, but with @i helps explain regexp.
             sql = "EXEC sp_executesql #{quote(sql)}"
             sql << ", #{types}, #{params}" unless params.empty?
+
+            end_time = Time.now.utc - start_time
+            log("******************  END EXEC QUERY(method: sp_executesql_sql) --#{sql.inspect} -- #{uuid} -- COMPLETED IN #{end_time} =======") do
+            end
+
           end
           sql
         end
@@ -352,13 +363,8 @@ module ActiveRecord
         end
 
         def _raw_select(sql, options = {})
-          log(" before executing sql query*****#{sql.inspect}***************#{Time.now.utc.strftime("%Y-%m-%dT%H:%M:%S.%LZ").inspect}*********************************") do
-          end
           handle = raw_connection_run(sql)
-          t = handle_to_names_and_values(handle, options)
-          log(" after executing sql query**********#{sql.inspect}**********#{Time.now.utc.strftime("%Y-%m-%dT%H:%M:%S.%LZ").inspect}*********************************") do
-          end
-          t
+          handle_to_names_and_values(handle, options)
         ensure
           finish_statement_handle(handle)
         end
