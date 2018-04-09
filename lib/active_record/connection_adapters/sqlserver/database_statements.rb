@@ -12,7 +12,15 @@ module ActiveRecord
         end
 
         def exec_query(sql, name = 'SQL', binds = [], prepare: false)
-          sp_executesql(sql, name, binds, prepare: prepare)
+          uuid = SecureRandom.uuid
+          start_time = Time.now.utc
+          log("======= START EXEC QUERY (method: exec_query) #{sql.inspect} -- #{uuid} -- =======") do
+          end
+          result = sp_executesql(sql, name, binds, prepare: prepare)
+          end_time = Time.now.utc - start_time
+          log("======= END EXEC QUERY(method: exec_query) -- #{uuid} -- COMPLETED IN #{end_time} =======") do
+          end
+          result
         end
 
         def exec_insert(sql, name = nil, binds = [], pk = nil, _sequence_name = nil)
@@ -222,19 +230,23 @@ module ActiveRecord
         # === SQLServer Specific (Executing) ============================ #
 
         def do_execute(sql, name = 'SQL')
-          log(" do_execute - Before executing sql query*****#{sql.inspect}***************#{Time.now.utc.strftime("%Y-%m-%dT%H:%M:%S.%LZ").inspect}*********************************") do
-          end
-
-          t = log(sql, name) { raw_connection_do(sql) }
-          log(" do_execute - After executing sql query*****#{sql.inspect}***************#{Time.now.utc.strftime("%Y-%m-%dT%H:%M:%S.%LZ").inspect}*********************************") do
-          end
-          t
+          log(sql, name) { raw_connection_do(sql) }
         end
 
         def sp_executesql(sql, name, binds, options = {})
           options[:ar_result] = true if options[:fetch] != :rows
           unless without_prepared_statement?(binds)
+            uuid = SecureRandom.uuid
+            start_time = Time.now.utc
+
+            log("******************  START EXEC QUERY (method: sp_executesql_types_and_parameters) #{sql.inspect} -- #{uuid} -- =======") do
+            end
+
             types, params = sp_executesql_types_and_parameters(binds)
+
+            end_time = Time.now.utc - start_time
+            log("******************  END EXEC QUERY(method: sp_executesql_types_and_parameters) -- #{uuid} -- COMPLETED IN #{end_time} =======") do
+            end
             sql = sp_executesql_sql(sql, types, params, name)
           end
           raw_select sql, name, binds, options
