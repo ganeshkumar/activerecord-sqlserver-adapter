@@ -12,6 +12,7 @@ module ActiveRecord
         end
 
         def exec_query(sql, name = 'SQL', binds = [], prepare: false)
+          ::Rails.logger.info "**************************log method: #{self.method(:log).source_location}"
           uuid = SecureRandom.uuid
           start_time = Time.now.utc
           log("======= START EXEC QUERY (method: exec_query) #{sql.inspect} -- #{uuid} -- =======") do
