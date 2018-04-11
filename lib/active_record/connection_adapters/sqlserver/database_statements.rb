@@ -13,16 +13,16 @@ module ActiveRecord
 
         def exec_query(sql, name = 'SQL', binds = [], prepare: false)
           # ::Rails.logger.info "**************************log method: #{self.method(:log).source_location}"
-          uuid = SecureRandom.uuid
+          # uuid = SecureRandom.uuid
           # start_time = Time.now.utc
           # log("======= START EXEC QUERY (method: exec_query) #{sql.inspect} -- #{uuid} -- =======") do
           # end
-          result = nil
-          time_taken = Benchmark.realtime do
-            result = sp_executesql(sql, name, binds, prepare: prepare)
-          end
-          log("======== EXEC QUERY --- #{sql.inspect} -- #{uuid} - REAL TIME #{time_taken} seconds") do
-          end
+          # result = nil
+          # time_taken = Benchmark.realtime do
+          result = sp_executesql(sql, name, binds, prepare: prepare)
+          # end
+          # log("======== EXEC QUERY --- #{sql.inspect} -- #{uuid} - REAL TIME #{time_taken} seconds") do
+          # end
           # end_time = Time.now.utc - start_time
           # log("======= END EXEC QUERY(method: exec_query) -- #{uuid} -- COMPLETED IN #{end_time} =======") do
           # end
@@ -365,7 +365,15 @@ module ActiveRecord
         # === SQLServer Specific (Selecting) ============================ #
 
         def raw_select(sql, name = 'SQL', binds = [], options = {})
-          log(sql, name, binds) { _raw_select(sql, options) }
+          result = nil
+
+          log(sql, name, binds) do
+            time_taken= Benchmark.realtime do
+              result = _raw_select(sql, options)
+            end
+            ::Rails.logger.info "raw_select- ******************#{sql.inspect} ********************* REAL TIME: #{time_taken} seconds"
+            result
+          end
         end
 
         def _raw_select(sql, options = {})
